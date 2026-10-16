@@ -5,6 +5,8 @@ import org.example.bwxw.entity.Room;
 import org.example.bwxw.entity.User;
 import org.example.bwxw.repository.RoomRepository;
 import org.example.bwxw.repository.UserRepository;
+import org.example.bwxw.repository.RepairRepository;
+import org.example.bwxw.repository.LeaveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +21,12 @@ public class RoomService {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RepairRepository repairRepository;
+
+    @Autowired
+    private LeaveRepository leaveRepository;
     
     public List<Room> getAllRooms() {
         return roomRepository.findAll();
@@ -175,7 +183,7 @@ public class RoomService {
         room.setOccupied(Math.max(0, occupied - 1));
         
         // 更新房间状态
-        if (room.getOccupied() < room.getCapacity()) {
+        if (room.getOccupied() < room.getCapacity() && room.getStatus() != Room.RoomStatus.MAINTENANCE) {
             room.setStatus(Room.RoomStatus.AVAILABLE);
         }
         
@@ -188,6 +196,23 @@ public class RoomService {
     
     public Room createRoom(Room room) {
         return roomRepository.save(room);
+    }
+
+    @Transactional
+    public void deleteStudent(Long studentId) {
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("学生不存在"));
+        if (student.getRole() != User.UserRole.STUDENT) {
+            throw new IllegalArgumentException("该用户不是学生");
+        }
+        if (student.getRoom() != null) {
+            removeStudentFromRoom(studentId);
+        }
+        repairRepository.detachStudent(studentId);
+        leaveRepository.detachStudent(studentId);
+        userRepository.delete(student);
+        // 在事务内触发约束及乐观锁检查，失败时连同床位变更一起回滚。
+        userRepository.flush();
     }
     
     public Room updateRoom(Long id, Room roomDetails) {

@@ -67,14 +67,10 @@ public class AuthService {
             userRepository.save(user);
         }
         
-        // 生成简单token（实际应使用JWT）
+        // 单机部署使用服务端内存 Token。
         String token = UUID.randomUUID().toString();
         
-        // 存储token和用户的映射
-        String userIdentifier = user.getStudentId() != null && !user.getStudentId().isEmpty() 
-                ? user.getStudentId() 
-                : user.getUsername();
-        TokenAuthenticationFilter.storeToken(token, userIdentifier);
+        TokenAuthenticationFilter.storeToken(token, user);
         
         
         return new LoginResponse(

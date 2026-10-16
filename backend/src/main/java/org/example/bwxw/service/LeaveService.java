@@ -41,9 +41,15 @@ public class LeaveService {
     }
     
     public Leave createLeave(Leave leave) {
-        if (leave.getDays() > 3) {
+        if (leave.getStartDate() == null || leave.getEndDate() == null
+                || leave.getEndDate().isBefore(leave.getStartDate())) {
+            throw new IllegalArgumentException("请假日期不正确");
+        }
+        long days = java.time.temporal.ChronoUnit.DAYS.between(leave.getStartDate(), leave.getEndDate()) + 1;
+        if (days > 3) {
             throw new RuntimeException("单次请假不能超过3天");
         }
+        leave.setDays((int) days);
         
         Long studentId = leave.getStudent().getId();
         

@@ -1,4 +1,5 @@
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { escapeHtml } from '../../utils/html.js'
 import { roomApi } from '../../api/room'
 
 type StudentLike = {
@@ -156,8 +157,8 @@ function createAssignmentResultHtml(successCount: number, failCount: number, res
           <div class="building-header">
             <div class="building-icon">🏠</div>
             <div class="building-info">
-              <div class="class-name">${buildingInfo[0]}</div>
-              <div class="building-name">${buildingInfo[1]}</div>
+              <div class="class-name">${escapeHtml(buildingInfo[0])}</div>
+              <div class="building-name">${escapeHtml(buildingInfo[1])}</div>
             </div>
           </div>
           <div class="students-list">
@@ -170,8 +171,8 @@ function createAssignmentResultHtml(successCount: number, failCount: number, res
             <div class="avatar-circle success">✓</div>
           </div>
           <div class="student-info">
-            <div class="student-name">${studentInfo[0]}</div>
-            <div class="room-number">${studentInfo[1]}</div>
+            <div class="student-name">${escapeHtml(studentInfo[0])}</div>
+            <div class="room-number">${escapeHtml(studentInfo[1])}</div>
           </div>
         </div>
       `
@@ -183,8 +184,8 @@ function createAssignmentResultHtml(successCount: number, failCount: number, res
             <div class="avatar-circle failed">×</div>
           </div>
           <div class="student-info">
-            <div class="student-name">${studentInfo.split(':')[0]}</div>
-            <div class="error-reason">${studentInfo.split(':')[1] || '分配失败'}</div>
+            <div class="student-name">${escapeHtml(studentInfo.split(':')[0])}</div>
+            <div class="error-reason">${escapeHtml(studentInfo.split(':')[1] || '分配失败')}</div>
           </div>
         </div>
       `

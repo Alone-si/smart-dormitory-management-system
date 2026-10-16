@@ -16,6 +16,11 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Version
+    @JsonIgnore
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private long version;
     
     @Column(nullable = false, unique = true, length = 50)
     private String username; // 登录用户名（学号）

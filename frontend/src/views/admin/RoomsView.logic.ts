@@ -1,3 +1,4 @@
+import { escapeHtml } from '../../utils/html.js'
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Home, Users, AlertCircle } from 'lucide-vue-next'
@@ -140,11 +141,11 @@ const viewStudentDetail = (student: any) => {
   const getAvatarContent = () => {
     if (student.avatar) {
       // 如果有自定义头像，显示图片
-      return `<img src="${student.avatar}" alt="${student.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`
+      return `<img src="${escapeHtml(student.avatar)}" alt="${escapeHtml(student.name)}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" />`
     } else {
       // 没有头像则显示姓名首字母
       const firstChar = student.name ? student.name.charAt(0) : '?'
-      return `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 600; color: white;">${firstChar}</div>`
+      return `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 600; color: white;">${escapeHtml(firstChar)}</div>`
     }
   }
 
@@ -157,15 +158,15 @@ const viewStudentDetail = (student: any) => {
             ${getAvatarContent()}
           </div>
           <div class="student-info">
-            <h3>${student.name}</h3>
-            <p>学号：${student.studentId}</p>
+            <h3>${escapeHtml(student.name)}</h3>
+            <p>学号：${escapeHtml(student.studentId)}</p>
           </div>
         </div>
         
         <div class="student-details">
           <div class="detail-row">
             <span class="label">班级</span>
-            <span class="value">${student.className || '未分班'}</span>
+            <span class="value">${escapeHtml(student.className || '未分班')}</span>
           </div>
           <div class="detail-row">
             <span class="label">性别</span>
@@ -174,7 +175,7 @@ const viewStudentDetail = (student: any) => {
           ${student.phone ? `
           <div class="detail-row">
             <span class="label">电话</span>
-            <span class="value">${student.phone}</span>
+            <span class="value">${escapeHtml(student.phone)}</span>
           </div>
           ` : ''}
         </div>
@@ -197,7 +198,7 @@ const addStudentToRoom = (room: any) => {
         <div class="dialog-header">
           <div class="header-icon">🏠</div>
           <div class="header-content">
-            <div class="room-title">${room.building.name} - ${room.roomNumber}</div>
+            <div class="room-title">${escapeHtml(room.building.name)} - ${escapeHtml(room.roomNumber)}</div>
             <div class="room-subtitle">为此宿舍添加学生</div>
           </div>
         </div>
@@ -205,12 +206,12 @@ const addStudentToRoom = (room: any) => {
         <div class="room-stats">
           <div class="stat-item">
             <div class="stat-icon">🏠</div>
-            <div class="stat-number">${room.capacity}</div>
+            <div class="stat-number">${escapeHtml(room.capacity)}</div>
             <div class="stat-label">房间容量</div>
           </div>
           <div class="stat-item">
             <div class="stat-icon">👥</div>
-            <div class="stat-number">${room.occupied}</div>
+            <div class="stat-number">${escapeHtml(room.occupied)}</div>
             <div class="stat-label">当前入住</div>
           </div>
           <div class="stat-item available">

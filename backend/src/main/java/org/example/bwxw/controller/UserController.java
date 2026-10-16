@@ -6,10 +6,9 @@ import org.example.bwxw.dto.AdminRequest;
 import org.example.bwxw.dto.AdminResponse;
 import org.example.bwxw.dto.ApiResponse;
 import org.example.bwxw.dto.UserInfoResponse;
-import org.example.bwxw.entity.Room;
 import org.example.bwxw.entity.User;
 import org.example.bwxw.filter.TokenAuthenticationFilter;
-import org.example.bwxw.repository.RoomRepository;
+import org.example.bwxw.service.RoomService;
 import org.example.bwxw.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,7 +38,7 @@ public class UserController {
     private UserRepository userRepository;
     
     @Autowired
-    private RoomRepository roomRepository;
+    private RoomService roomService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -696,32 +695,7 @@ public class UserController {
                 return ApiResponse.error("权限不足，只有管理员才能删除学生");
             }
             
-            User student = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("学生不存在"));
-            
-            // 验证是否是学生
-            if (student.getRole() != User.UserRole.STUDENT) {
-                return ApiResponse.error("该用户不是学生");
-            }
-            
-            // 如果学生有宿舍，先处理退寝逻辑
-            Room room = student.getRoom();
-            if (room != null) {
-                int occupied = room.getOccupied() == null ? 0 : room.getOccupied();
-                room.setOccupied(Math.max(0, occupied - 1));
-
-                if (room.getOccupied() < room.getCapacity()) {
-                    room.setStatus(Room.RoomStatus.AVAILABLE);
-                }
-
-                roomRepository.save(room);
-            }
-            
-            // 删除学生前，将相关记录的外键置空（保留历史记录）
-            // 注意：JPA会自动将关联的报修和请假记录的student字段设置为null
-            
-            // 删除学生（相关的报修、请假记录会保留，但student字段为空）
-            userRepository.delete(student);
+            roomService.deleteStudent(id);
             return ApiResponse.success("学生删除成功", null);
         } catch (Exception e) {
             return ApiResponse.error("删除学生失败: " + e.getMessage());

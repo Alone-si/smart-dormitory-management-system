@@ -18,6 +18,10 @@ MySQL 不在 Compose 中创建，后端通过 `host.docker.internal:3306` 连接
 
 首次建立表结构时，可先按主 README 使用开发模式启动一次后端。
 
+从无乐观锁的旧版升级时，请先停止旧版后端并备份数据库，再执行
+`backend/config/upgrade-optimistic-lock.sql`，为 `users` 和 `rooms` 添加 `version` 列。
+如果已通过开发模式自动添加了这两列，不要重复执行 SQL。升级完成后再启动新版容器。
+
 ## 启动与检查
 
 ```powershell

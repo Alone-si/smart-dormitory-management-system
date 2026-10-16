@@ -80,10 +80,6 @@ public class LeaveController {
             if (leave.getEndDate().isBefore(leave.getStartDate())) {
                 return ApiResponse.error("结束日期不能早于开始日期");
             }
-            if (leave.getDays() == null || leave.getDays() <= 0) {
-                return ApiResponse.error("请假天数必须大于0");
-            }
-
             User currentUser = currentUserService.getCurrentUser();
             leave.setId(null);
             leave.setStudent(currentUser);

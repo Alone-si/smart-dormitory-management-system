@@ -111,6 +111,8 @@ GitHub Actions 会在推送和 Pull Request 时执行相同检查。
 
 ## 许可证
 
+版本变更与数据库升级要求见 [更新日志](CHANGELOG.md)。
+
 本项目使用 [MIT License](LICENSE)。
 
 ## 联系方式

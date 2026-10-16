@@ -4,6 +4,7 @@ logs/
 
 # 后端
 backend/target/
+backend/backup/
 backend/.idea/
 backend/*.iml
 

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -28,8 +29,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private static final long TOKEN_TTL_MILLIS = 2 * 60 * 60 * 1000L;
     private static final Map<String, TokenEntry> tokenStore = new ConcurrentHashMap<>();
 
-    public static void storeToken(String token, String userIdentifier) {
-        tokenStore.put(token, new TokenEntry(userIdentifier, System.currentTimeMillis() + TOKEN_TTL_MILLIS));
+    public static void storeToken(String token, User user) {
+        tokenStore.entrySet().removeIf(entry -> entry.getValue().isExpired());
+        tokenStore.put(token, new TokenEntry(user.getId(), user.getPassword(), System.currentTimeMillis() + TOKEN_TTL_MILLIS));
     }
 
     public static void removeToken(String token) {
@@ -52,12 +54,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     return;
                 }
             } else {
-                String userIdentifier = entry.getUserIdentifier();
-                User user = userRepository.findByStudentId(userIdentifier)
-                        .or(() -> userRepository.findByUsername(userIdentifier))
-                        .orElse(null);
+                User user = userRepository.findById(entry.userId).orElse(null);
 
-                if (user == null) {
+                // 密码变更使所有旧会话失效；使用不可变 ID 避免用户名变更导致身份混淆。
+                if (user == null || !"ACTIVE".equals(user.getStatus())
+                        || !Objects.equals(entry.passwordHash, user.getPassword())) {
                     tokenStore.remove(token);
                     rejectExpiredLogin(response);
                     return;
@@ -117,16 +118,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private static class TokenEntry {
-        private final String userIdentifier;
+        private final Long userId;
+        private final String passwordHash;
         private final long expiresAt;
 
-        TokenEntry(String userIdentifier, long expiresAt) {
-            this.userIdentifier = userIdentifier;
+        TokenEntry(Long userId, String passwordHash, long expiresAt) {
+            this.userId = userId;
+            this.passwordHash = passwordHash;
             this.expiresAt = expiresAt;
-        }
-
-        String getUserIdentifier() {
-            return userIdentifier;
         }
 
         boolean isExpired() {

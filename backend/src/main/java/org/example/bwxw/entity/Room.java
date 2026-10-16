@@ -16,6 +16,11 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Version
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private long version;
     
     @ManyToOne
     @JoinColumn(name = "building_id", nullable = false)

@@ -4,11 +4,16 @@ import org.example.bwxw.entity.Repair;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
 public interface RepairRepository extends JpaRepository<Repair, Long> {
+
+    @Modifying
+    @Query("UPDATE Repair r SET r.student = null WHERE r.student.id = :studentId")
+    int detachStudent(Long studentId);
     
     @EntityGraph(attributePaths = {"student", "student.room", "student.room.building", "room", "room.building", "handler"})
     List<Repair> findAll();
