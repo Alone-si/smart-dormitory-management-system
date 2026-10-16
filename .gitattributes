@@ -1,0 +1,3 @@
+# Preserve Archify artifact bytes so validation hashes remain reproducible.
+outputs/architecture/*.html -text
+outputs/architecture/*.json -text

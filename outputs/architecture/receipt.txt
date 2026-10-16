@@ -1,16 +1,19 @@
 diagram_type: architecture
-output: Z:/SmartDormSystem/outputs/architecture/smart-dorm.html
-specification_sha256: e4b9b29ecde58a1162298e585a1b9fde54e56c5271bd25f01cd4499b60663907
-specification_bytes: 3534
-artifact_sha256: 3bcd60178a4191a482eb73b6d6089ddd94d641fbeca2e478d07ea1f19f2ad635
-artifact_bytes: 706960
+output: outputs/architecture/smart-dorm.html
+image: outputs/architecture/smart-dorm.png
+specification_sha256: e1e466802b417143fe2c86f10a395edd790f515c724bdf46c587d2a63da5a23c
+specification_bytes: 4806
+artifact_sha256: d5715aee4e98ab054462ccf0ce7a81839acd3527d2a33e8df25642bc301c6fde
+artifact_bytes: 710142
 validation: 9/9 showcase, 0 errors, 0 warnings
 browser_evidence: passed
 visual_review: passed
-visual_review_scope: inspected 2048x1320 light and dark screenshots; no visible overlaps
-correction_rounds: 1
+visual_review_scope: inspected 2048x1320 light/dark browser captures and canonical 4800x2560 PNG; labels readable with no visible overlaps
+correction_rounds: 0
+repository_revision: 77331a2872b3a92587c71f311078620ea596b708
+export: native Archify PNG, canonical=true
 
 源码说明：这是主要请求路径的概览，认证入口 /api/auth/** 等存在放行规则。
 Controller 与 Service 合并表示业务层；UserController、StudentController 等也直接调用 Repository。
 7 张表来自 JPA 实体映射，并非运行中数据库的实测数量。
-上传头像由 UserController 写入本地 uploads 目录，属于本图省略的辅助路径。
+上传头像由 UserController 写入本地 uploads 目录，属于主图省略的辅助路径。

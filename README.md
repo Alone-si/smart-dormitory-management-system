@@ -12,6 +12,13 @@ Token 有效期为 2 小时，后端重启后现有 Token 会失效。该方式�
 
 ## 项目结构
 
+![智能宿舍管理系统项目架构](outputs/architecture/smart-dorm.png)
+
+上图展示主要请求路径：双角色页面 → API 与登录状态 → 请求认证 → 接口与业务处理 → JPA → MySQL。
+Controller 与 Service 在图中合并展示，部分 Controller 会直接调用 Repository；登录接口存在认证放行规则。
+
+[查看原始高清图片](outputs/architecture/smart-dorm.png) · [交互式架构图 HTML](outputs/architecture/smart-dorm.html)（下载后用浏览器打开）
+
 ```text
 SmartDormSystem/
 ├─ backend/
